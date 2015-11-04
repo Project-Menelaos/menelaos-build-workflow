@@ -1,0 +1,41 @@
+--- 
+需求分析: 
+  - 功能: |
+        一个测试项目。
+        其实一点卵用都没有。
+
+  - 界面: "@include(ui.md)"
+  - 接口: "测试接口\n"
+
+概要设计:
+  - 模块层次结构设计: "@autogen(autogen_conf/function_diagram.yaml)"
+  - 接口设计:
+      - 内部接口: "@autogen(autogen_conf/function_list.yaml)"
+      - 外部接口: "@autogen(autogen_conf/file_structure.yaml)"
+  - 界面设计: "@include(ui.md)"
+  - 数据结构设计: "@autogen(autogen_conf/ast.yaml)"
+
+详细设计:
+  - 模块内程序逻辑描述: "@autogen(autogen_conf/per_function_diagram.yaml)"
+
+测试设计执行:
+  - 测试用例设计:
+      - 测试数据: "@autogen(autogen_conf/test.yaml#test)"
+      - 期望结果: "@autogen(autogen_conf/test.yaml#expectation)"
+  - 测试执行结果记录: "@autogen(autogen_conf/test.yaml#result)"
+
+调试分析:
+  - Bug调试功能:
+      - 调试方法: "@autogen(autogen_conf/debug.yaml#method)"
+      - 调试过程: "@autogen(autogen_conf/debug.yaml#steps)"
+      - Bug原因分析: "@autogen(autogen_conf/debug.yaml#analysis)"
+
+用户手册:
+  - 开发环境: "@include(environment.md#development)"
+  - 运行环境: "@include(environment.md#deployment)"
+  - 运行界面:
+      - 操作截图: "@autogen(autogen_conf/screenshots.yaml#picture)"
+      - 文字说明: "@autogen(autogen_conf/screenshots.yaml#destription)"
+
+附录:
+  - 源程序清单: "@autogen(autogen_conf/sources.yaml)"

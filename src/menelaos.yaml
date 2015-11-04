@@ -11,10 +11,5 @@ metadata:
   name: "Menelaos Test Project"
   version: "1.0.0"
   platform: [ win32, linux, darwin ]
-  需求分析: 
-    - 功能: |
-            一个测试项目。
-            其实一点卵用都没有。
-
-    - 界面: "测试界面\n"
-    - 接口: "测试接口\n"
+doc: 
+ - doc\doc.yaml
