@@ -5,6 +5,7 @@
     "gulp": "gulp"
   },
   "devDependencies": {
+    "file-exists": "^1.0.0",
     "gulp-watch": "^4.3.5"
   }
 }

@@ -33,3 +33,10 @@
 
 # node.js
 node_modules/
+npm-debug.log
+
+# python
+
+
+# Visual Studio Code
+.vscode
