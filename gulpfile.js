@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var watch = require('gulp-watch');
 var shell = require('gulp-shell');
 var mkdirp = require('mkdirp');
 
@@ -25,4 +26,31 @@ gulp.task('init', function() {
             })
         }
     }
+    console.log("Initialization finished.");
 })
+
+gulp.task('build', ['make-docx'], function () {
+    console.log("Building project...");
+})
+
+gulp.task('build-doc', function () {
+    console.log("Building documents...");
+})
+
+gulp.task('build-src', function () {
+    console.log("Building sources...");
+})
+
+gulp.task('collect-doc', ['build-doc', 'build-src'], function () {
+    console.log("Collecting documents...");
+})
+
+gulp.task('make-docx', ['collect-doc'], function () {
+    console.log("Making Microsoft Word format output...");
+})
+
+gulp.task('watch', function () {
+    watch('./{doc,src}/**/*.*', function () {
+        gulp.start('build', done);
+    });
+});

@@ -1,7 +1,10 @@
 {
-    "name": "menelaos-test",
-    "version": "0.0.1",
-    "scripts": {
-        "gulp": "gulp"
-    }
+  "name": "menelaos-test",
+  "version": "0.0.1",
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "devDependencies": {
+    "gulp-watch": "^4.3.5"
+  }
 }
