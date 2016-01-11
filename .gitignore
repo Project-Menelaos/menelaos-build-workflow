@@ -30,3 +30,6 @@
 
 # Debug files
 *.dSYM/
+
+# node.js
+node_modules/
