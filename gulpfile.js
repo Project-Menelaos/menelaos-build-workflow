@@ -1,3 +1,12 @@
+//    __  __                 _
+//   |  \/  | Project       | |
+//   | \  / | ___ _ __   ___| | __ _  ___  ___
+//   | |\/| |/ _ \ '_ \ / _ \ |/ _` |/ _ \/ __|
+//   | |  | |  __/ | | |  __/ | (_| | (_) \__ \
+//   |_|  |_|\___|_| |_|\___|_|\__,_|\___/|___/
+//                             Fuck you, Helen!
+//
+
 var gulp = require('gulp');
 var watch = require('gulp-watch');
 var shell = require('gulp-shell');
