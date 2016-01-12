@@ -20,6 +20,7 @@
     "merge-stream": "^1.0.0",
     "mkdirp": "^0.5.1",
     "mustache": "^2.2.1",
+    "svg2png": "^3.0.0",
     "walk": "^2.3.9"
   },
   "scripts": {
