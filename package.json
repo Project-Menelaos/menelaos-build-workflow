@@ -1,21 +1,26 @@
 {
-    "name": "menelaos-test",
-    "version": "0.0.1",
-    "description": "A testing menelaos project",
-    "author": "James Swineson <i@swineson.me>",
-    "dependencies": {
-        "gulp": ">= 3.1.0",
-        "gulp-shell": ">= 0.5.1",
-        "gulp-watch": ">= 4.3.5",
-        "mkdirp": ">= 0.5.1",
-        "menelaos": ">= 0.5.6",
-        "file-exists": ">= 1.0.0"
-    },
-    "scripts": {
-        "gulp": "gulp"
-    },
-    "devDependencies": {
-        "file-exists": "^1.0.0",
-        "gulp-watch": "^4.3.5"
-    }
+  "name": "menelaos-test",
+  "version": "0.0.1",
+  "description": "A testing menelaos project",
+  "author": "James Swineson <i@swineson.me>",
+  "dependencies": {
+    "file-exists": "^1.0.0",
+    "gulp": "^3.1.0",
+    "gulp-shell": "^0.5.1",
+    "gulp-watch": "^4.3.5",
+    "menelaos": "^0.5.6",
+    "mkdirp": "^0.5.1",
+    "mustache": "^2.2.1",
+    "merge-stream": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-insert": "^0.5.0"
+  },
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "devDependencies": {
+    "file-exists": "^1.0.0",
+    "gulp-watch": "^4.3.5"
+  }
 }
