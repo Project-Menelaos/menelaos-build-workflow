@@ -9,6 +9,8 @@ var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var merge = require('merge-stream');
 var insert = require('gulp-insert');
+var gfi = require("gulp-file-insert");
+var order = require("gulp-order");
 
 var buildDir = './build'
 
@@ -41,7 +43,7 @@ gulp.task('init', function() {
     // initialize environment
     mkdirp('./python_modules');
     gulp.start('install-deps');
-    var structure = require('./doc/index.json');
+    structure = require('./doc/index.json');
     for (var heading in structure) {
         if (structure.hasOwnProperty(heading)) {
             folder = './doc/' + heading;
@@ -59,8 +61,8 @@ gulp.task('init', function() {
     console.log("Initialization finished.");
 })
 
-gulp.task('source-code-list', function() {
-    console.log("Building source list...");
+gulp.task('build-src', function() {
+    console.log("Building sources...");
     scriptsPath = './src'
     var folders = getFolders(scriptsPath);
     mkdirp(buildDir + '/src');
@@ -90,10 +92,39 @@ gulp.task('build', ['update-deps', 'make-docx'], function () {
 
 gulp.task('build-doc', function () {
     console.log("Building documents...");
-})
-
-gulp.task('build-src', function () {
-    console.log("Building sources...");
+    docsPath = './src'
+    structure = require('./doc/index.json');
+    // console.log(structure);
+    Object.keys(structure).map(function(folder, index) {
+        console.log(folder);
+        console.log(structure[folder]);
+        structure[folder].map(function(item){
+            return item + '.md'
+        })
+    });
+    sequence = [];
+    for (var items in structure) {
+        if (structure.hasOwnProperty(items)) {
+            for (var item in structure[items]) {
+                if (items.hasOwnProperty(item)) {
+                    sequence.push(path.join(docsPath, items, structure[items][item] + '.md'));
+                }
+            }
+        }
+    }
+    // console.log(sequence);
+    // gulp.src(path.join(docsPath, '/**/*.md'))
+    //   .pipe(gfi({
+    //     "/* file 1 */": "tmp/file1",
+    //     "/* file 2 */": "tmp/file2",
+    //     version: "tmp/version_number"
+    //   }))
+    //   .pipe(gulp.dest('./dist/'));
+    //return merge(tasks);
+    gulp.src(path.join(docsPath, '/**/*.md'))
+        .pipe(order(sequence))
+        .pipe(concat(buildDir + '/src/' + folder + '.md'))
+        .pipe(gulp.dest(path.join(buildDir, 'docs')));
 })
 
 gulp.task('collect-doc', ['build-doc', 'build-src'], function () {

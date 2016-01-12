@@ -6,15 +6,18 @@
   "dependencies": {
     "file-exists": "^1.0.0",
     "gulp": "^3.1.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-file-insert": "^1.0.2",
+    "gulp-insert": "^0.5.0",
+    "gulp-order": "^1.1.1",
+    "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.5.1",
     "gulp-watch": "^4.3.5",
+    "marked": "^0.3.5",
     "menelaos": "^0.5.6",
-    "mkdirp": "^0.5.1",
-    "mustache": "^2.2.1",
     "merge-stream": "^1.0.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-concat": "^2.6.0",
-    "gulp-insert": "^0.5.0"
+    "mkdirp": "^0.5.1",
+    "mustache": "^2.2.1"
   },
   "scripts": {
     "gulp": "gulp"
