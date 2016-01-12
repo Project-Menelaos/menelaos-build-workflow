@@ -11,14 +11,11 @@
         "menelaos": ">= 0.5.6",
         "file-exists": ">= 1.0.0"
     },
-    "devDependencies": {
-
-    },
     "scripts": {
         "gulp": "gulp"
     },
     "devDependencies": {
-    "file-exists": "^1.0.0",
-    "gulp-watch": "^4.3.5"
+        "file-exists": "^1.0.0",
+        "gulp-watch": "^4.3.5"
     }
 }

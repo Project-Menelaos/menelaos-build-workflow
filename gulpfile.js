@@ -3,6 +3,21 @@ var watch = require('gulp-watch');
 var shell = require('gulp-shell');
 var mkdirp = require('mkdirp');
 var fileExists = require('file-exists');
+var fs = require('fs');
+var path = require('path');
+var concat = require('gulp-concat');
+var rename = require('gulp-rename');
+var merge = require('merge-stream');
+var insert = require('gulp-insert');
+
+var buildDir = './build'
+
+function getFolders(dir) {
+    return fs.readdirSync(dir)
+      .filter(function(file) {
+        return fs.statSync(path.join(dir, file)).isDirectory();
+      });
+}
 
 function savefile(filename, string) {
   require('fs').writeFileSync(filename, string);
@@ -42,6 +57,38 @@ gulp.task('init', function() {
         }
     }
     console.log("Initialization finished.");
+})
+
+gulp.task('source-code-list', function() {
+    console.log("Building source list...");
+    scriptsPath = './src'
+    var folders = getFolders(scriptsPath);
+    mkdirp(buildDir + '/src');
+
+    var tasks = folders.map(function(folder) {
+       // concat into foldername.js
+       // write to output
+       // minify
+       // rename to folder.min.js
+       // write to output again
+       return gulp.src(path.join(scriptsPath, folder, '/**/*.{c,h}'))
+       .pipe(insert.transform(function(contents, file) {
+        	var head = '### 文件`' + file.path + '`的内容：\n```c\n';
+            var tail = '\n```'
+        	return head + contents + tail;
+        }))
+         .pipe(concat(buildDir + '/src/' + folder + '.md'))
+         .pipe(gulp.dest('./'));
+    });
+
+    // process all remaining files in scriptsPath root into main.js and main.min.js files
+    // var root = gulp.src(path.join(scriptsPath, '/*.js'))
+    //      .pipe(concat('main.js'))
+    //      .pipe(gulp.dest(scriptsPath))
+    //      .pipe(rename('main.min.js'))
+    //      .pipe(gulp.dest(scriptsPath));
+
+    return merge(tasks);// , root);
 })
 
 gulp.task('build', ['update-deps', 'make-docx'], function () {
