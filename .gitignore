@@ -36,7 +36,8 @@ node_modules/
 npm-debug.log
 
 # python
-
+lextab.py
+yacctab.py
 
 # Visual Studio Code
 .vscode

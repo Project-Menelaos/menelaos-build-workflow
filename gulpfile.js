@@ -24,6 +24,7 @@ var order = require("gulp-order");
 var marked = require('marked');
 var file = require('gulp-file');
 var walk = require('walk');
+// var mermaid = require('mermaid');
 
 var buildDir = './build'
 
@@ -45,7 +46,7 @@ function getFolders(dir) {
 }
 
 function savefile(filename, string) {
-  require('fs').writeFileSync(filename, string);
+  fs.writeFileSync(filename, string);
 }
 
 gulp.task('display-logo', function() {
@@ -104,40 +105,76 @@ gulp.task('build-src-graph', function() {
     //     console.log(fileStat.name, buffer.byteLength);
     //     next();
     //   });
-    filename = fileStat.name;
-    filepath = path.resolve(root, filename)
-        if (['.c', '.h'].contains(path.extname(filename))) {
-            console.log("Found: " + filename);
-            gulp.src(filepath, {read: false})
-                .pipe(shell([
-                  '/usr/bin/env python3 ./python_modules/c-flowchart/mermaid_graph.py <%= file.path %> > ' + path.join(buildDir, 'graph-src', filename + '.graph'),
-              ], {
-                  ignoreErrors: true
-              }))
-        }
+        filename = fileStat.name;
+        filepath = path.resolve(root, filename)
+            if (['.c'].contains(path.extname(filename))) {
+                console.log("Found: " + filename);
+                gulp.src(filepath, {read: false})
+                    .pipe(shell([
+                      '/usr/bin/env python3 ./python_modules/c-flowchart/mermaid_graph.py <%= file.path %> > ' + path.join(buildDir, 'graph-src', filename + '.graph'),
+                  ], {
+                      ignoreErrors: true
+                  }))
+            }
         next();
     })
+
+})
+
+gulp.task('build-graph', ['build-src-graph'], function() {
     mkdirp(path.join(buildDir, 'graph'));
+    // mermaid.initialize({
+    //       startOnLoad:true,
+    //       flowchart:{
+    //               useMaxWidth:true,
+    //               htmlLabels:true
+    //       }
+    // });
     // TODO: change to walk.walk
-        walk.walk(path.join(buildDir, 'graph'), {
-            followLinks: false,
-        }).on("file", function(root, fileStat, next) {
-    //         fs.readFile(path.resolve(root, fileStat.name), function (buffer) {
-    //     console.log(fileStat.name, buffer.byteLength);
-    //     next();
-    //   });
-    filename = fileStat.name;
-    filepath = path.resolve(root, filename)
-        if (['.c', '.h'].contains(path.extname(filename))) {
-            console.log("Found: " + filename);
-            gulp.src(filepath, {read: false})
-                .pipe(shell([
-                  '/usr/bin/env python3 ./python_modules/c-flowchart/mermaid_graph.py <%= file.path %> > ' + path.join(buildDir, 'graph', filename + '.graph'),
-              ], {
-                  ignoreErrors: true
-              }))
-        }
+    walk.walk(path.join(buildDir, 'graph-src'), {
+        followLinks: false,
+    }).on("file", function(root, fileStat, next) {
+        filename = fileStat.name;
+        filepath = path.resolve(root, filename)
+            if (['.graph'].contains(path.extname(filename))) {
+                console.log("Mermaid parse: " + filename);
+                fs.readFile(filepath, 'utf8', function (err,data) {
+                  if (err) {
+                    return console.log(err);
+                  }
+                //   console.log(data);
+                //   mermaid.mermaidAPI.render('test', data, function(svgGraph){
+                //     console.log(svgGraph);
+                //     savefile(path.join(buildDir, 'graph', filename + '.svg', svgGraph));
+                //  });
+                });
+            }
         next();
+    });
+
+    mdString = "";
+    walk.walk(path.join(buildDir, 'graph'), {
+        followLinks: false,
+    }).on("file", function(root, fileStat, next) {
+        filename = fileStat.name;
+        filepath = path.resolve(root, filename)
+            if (['.svg'].contains(path.extname(filename))) {
+                console.log("Adding: " + filename);
+                // fs.readFile(filepath, 'utf8', function (err,data) {
+                //   if (err) {
+                //     return console.log(err);
+                //   }
+                // //   console.log(data);
+                // //   mermaid.mermaidAPI.render('test', data, function(svgGraph){
+                // //     console.log(svgGraph);
+                // //     savefile(path.join(buildDir, 'graph', filename + '.svg', svgGraph));
+                // //  });
+                // });
+                mdString += "`" + filename + "`:\n" + "![" + filepath + "](" + " " + filename + ")" ;
+            }
+        next();
+    }).on("end", function(){
+        savefile(path.join(buildDir, 'graph.md'), mdString);
     })
 })
 
@@ -170,7 +207,7 @@ gulp.task('build', ['update-deps', 'make-docx'], function () {
     console.log("Building project...");
 })
 
-gulp.task('build-doc', ['build-src-list'], function () {
+gulp.task('build-doc', ['build-src-list', 'build-graph'], function () {
     console.log("Building documents...");
     docsPath = './doc'
     structure = require('./doc/index.json');
@@ -196,20 +233,16 @@ gulp.task('build-doc', ['build-src-list'], function () {
         }))
         .pipe(concat('doc.md'))
         .pipe(gfi({
-            "{{ src-list }}": path.join(buildDir, 'src.md')
-            //"{{ src-graph }}": "tmp/file2",
+            "{{ src-list }}": path.join(buildDir, 'src.md'),
+            "{{ src-graph }}": path.join(buildDir, 'graph.md'),
             // version: "gulpfile."
         }))
         .pipe(gulp.dest(path.join(buildDir)));
 })
 
-gulp.task('make-html', ['build-doc', 'build-src'], shell.task([
+gulp.task('make-docx', ['build-doc', 'build-src'], shell.task([
   'pandoc --from=markdown_github --to=docx --smart --verbose --output="./build/report.docx" ./build/doc.md'
 ]))
-
-gulp.task('make-docx', ['collect-doc'], function () {
-    console.log("Making Microsoft Word format output...");
-})
 
 gulp.task('package', ['build'], function () {
     console.log("Packaging project files...");
