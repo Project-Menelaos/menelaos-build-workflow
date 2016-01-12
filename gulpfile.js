@@ -7,6 +7,7 @@
 //                             Fuck you, Helen!
 //
 
+var art = "IF9fICBfXyAgICAgICAgICAgICAgICAgXyAgICAgICAgICAgICAgICAgDQp8ICBcLyAgfCBQcm9qZWN0ICAgICAgIHwgfCAgICAgICAgICAgICAgICANCnwgXCAgLyB8IF9fXyBfIF9fICAgX19ffCB8IF9fIF8gIF9fXyAgX19fDQp8IHxcL3wgfC8gXyBcICdfIFwgLyBfIFwgfC8gX2AgfC8gXyBcLyBfX3wNCnwgfCAgfCB8ICBfXy8gfCB8IHwgIF9fLyB8IChffCB8IChfKSBcX18gXA0KfF98ICB8X3xcX19ffF98IHxffFxfX198X3xcX18sX3xcX19fL3xfX18vDQogICAgICAgICAgICAgICAgICAgICAgICAgRnVjayB5b3UsIEhlbGVuIQ==";
 var gulp = require('gulp');
 var watch = require('gulp-watch');
 var shell = require('gulp-shell');
@@ -33,6 +34,10 @@ function getFolders(dir) {
 function savefile(filename, string) {
   require('fs').writeFileSync(filename, string);
 }
+
+gulp.task('display-logo', function() {
+    console.log(new Buffer(art, 'base64').toString('ascii'));
+})
 
 gulp.task('default', function() {
   gulp.start('build', done);
