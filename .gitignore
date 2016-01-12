@@ -40,3 +40,7 @@ npm-debug.log
 
 # Visual Studio Code
 .vscode
+
+# Menelaos
+
+build/
