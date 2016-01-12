@@ -1,14 +1,17 @@
 var gulp = require('gulp');
 var shell = require('gulp-shell');
 var path = require('path');
+var mkdirp = require('mkdirp');
+var order = require("gulp-order");
+var concat = require('gulp-concat');
+var gfi = require("gulp-file-insert");
+var insert = require('gulp-insert');
+var addsrc = require('gulp-add-src');
+var config = require('../config.json');
+var structure = require('../doc/index.json');
 
-gulp.task('build', [ 'update-deps', 'make-docx' ],
-          function() { console.log("Building project..."); });
-
-gulp.task('build-doc', [ 'build-src-list', 'build-graph' ], function() {
-  console.log("Building documents...");
+gulp.task('markdown', function() {
   docsPath = './doc';
-  structure = require('./doc/index.json');
 
   Object.keys(structure).map(function(folder) {
     // concat into foldername.md
@@ -23,29 +26,40 @@ gulp.task('build-doc', [ 'build-src-list', 'build-graph' ], function() {
   });
 
   sequence = Object.keys(structure).map(function(i) { return i + '.md' });
+  sequence.unshift("frontpage.md");
   console.log(sequence);
-  gulp.src(path.join(buildDir, 'doc', '**/*.md'))
+  gulp.src(path.join('doc', 'frontpage.md'))
+      .pipe(addsrc(path.join(buildDir, 'doc', 'docs', '*.md')))
       .pipe(order(sequence))
       .pipe(insert.transform(function(contents, file) {
         return contents + '\n';
       }))
-      .pipe(concat('doc.md'))
+      .pipe(concat('report.md'))
       .pipe(gfi({
         "{{ src-list }}" : path.join(buildDir, 'src.md'),
-        "{{ src-graph }}" : path.join(buildDir, 'graph', 'graph.md'),
+        // "{{ src-graph }}" : path.join(buildDir, 'graph', 'graph.md'),
+        "{{ callgraph }}" : path.join(buildDir, 'dot-src', 'callgraph.md'),
+        "{{ cfg }}" : path.join(buildDir, 'dot-src', 'cfg.md'),
+        "{{ dom }}" : path.join(buildDir, 'dot-src', 'dom.md')
         // version: "gulpfile."
       }))
       .pipe(gulp.dest(path.join(buildDir)));
 });
 
-gulp.task('make-docx', [ 'build-doc', 'build-src' ], shell.task([
+gulp.task('docx', shell.task([
+  [ 'rm', '-f', path.join(buildDir, 'report.docx') ]
+      .cmd(),
   [
     'pandoc',
     '--from=markdown_github',
     '--to=docx',
     '--smart',
     '--verbose',
-    '--output="./build/report.docx"',
-    './build/doc.md'
-  ].cmd()
+    '--output=' + path.join(buildDir, 'report.docx'),
+    path.join(buildDir, 'report.md')
+  ].cmd(),
+  {
+    ignoreErrors : true,
+    verbose : true,
+  }
 ]));

@@ -1,4 +1,6 @@
-config = require('../config.json');
+var fs = require('fs');
+var path = require('path');
+var config = require('../config.json');
 buildDir = './build';
 
 Array.prototype.contains = function(obj) {

@@ -1,7 +1,12 @@
 var gulp = require('gulp');
+var mkdirp = require('mkdirp');
+var path = require('path');
+var insert = require('gulp-insert');
+var concat = require('gulp-concat');
+var merge = require('merge-stream');
+var config = require('../config.json');
 
-gulp.task('build-src-list', function() {
-  console.log("Building sources...");
+gulp.task('src-list', function() {
   scriptsPath = './src';
   var folders = getFolders(scriptsPath);
   mkdirp(buildDir + '/src');

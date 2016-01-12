@@ -15,15 +15,11 @@ var art =
     8ICB8X3xcX19ffF98IHxffFxfX198X3xcX18sX3xcX19fL3xfX18vDQogICAgICAgICAgICAgI \
     CAgICAgICAgICAgRnVjayB5b3UsIEhlbGVuIQ==";
 var gulp = require('gulp');
+var gulpSequence = require('gulp-sequence');
 require('require-dir')('./gulp');
 
-var fileExists = require('file-exists');
-var concat = require('gulp-concat');
 var rename = require('gulp-rename');
-var merge = require('merge-stream');
-var insert = require('gulp-insert');
-var gfi = require("gulp-file-insert");
-var order = require("gulp-order");
+
 var marked = require('marked');
 var file = require('gulp-file');
 // var mermaid = require('mermaid');
@@ -31,13 +27,13 @@ var file = require('gulp-file');
 console.log(new Buffer(art, 'base64').toString('ascii'));
 
 gulp.task('default', function() {
-  gulp.start('build', done);
-  gulp.start('watch', done);
+  gulp.start('build');
+  gulp.start('watch');
 });
 
-gulp.task('build-src', function() {
+gulp.task('graph',
+          gulpSequence('llvm-ir', [ 'cfg-dot', 'callgraph-dot', 'dom-dot' ],
+                       'compile-dot', 'compile-graph'));
 
-});
-
-gulp.task('package', [ 'build' ],
-          function() { console.log("Packaging project files..."); });
+gulp.task('build', gulpSequence('update-deps', [ 'src-list', 'graph' ],
+                                'markdown', 'docx'));

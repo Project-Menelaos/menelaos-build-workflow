@@ -2,7 +2,8 @@
     "paths":{
         "clang": "/usr/bin/clang",
         "opt": "/usr/local/opt/llvm/bin/opt",
-        "graphviz": "/usr/local/opt/graphviz/bin/dot"
+        "graphviz": "/usr/local/opt/graphviz/bin/dot",
+        "ncu": "ncu"
     },
     "buildDir": "./build"
 }
