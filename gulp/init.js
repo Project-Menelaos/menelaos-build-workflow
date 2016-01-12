@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var shell = require('gulp-shell');
+var mkdirp = require('mkdirp');
 require('./common.js');
 
 gulp.task('install-deps',

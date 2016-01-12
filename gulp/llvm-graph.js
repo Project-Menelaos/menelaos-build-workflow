@@ -2,8 +2,9 @@ var gulp = require('gulp');
 var walk = require('walk');
 var path = require('path');
 var shell = require('gulp-shell');
+var mkdirp = require('mkdirp');
 
-gulp.task('build-llvm-ir', function() {
+gulp.task('llvm-ir', function() {
   mkdirp(path.join(buildDir, 'dot-src'));
   // TODO: change to walk.walk
   walk.walk(path.join('./', 'src'),
@@ -43,7 +44,7 @@ gulp.task('build-llvm-ir', function() {
       })
 });
 
-gulp.task('build-dot-graph-source', function() {
+gulp.task('dotfile', [ 'llvm-ir' ], function() {
   walk.walk(path.join(buildDir, 'dot-src'))
       .on("file", function(root, fileStat, next) {
         filename = fileStat.name;
@@ -66,7 +67,7 @@ gulp.task('build-dot-graph-source', function() {
       })
 });
 
-gulp.task('build-dot-graph-png', function() {
+gulp.task('llvm-graph', [ 'llvm-ir', 'dotfile' ], function() {
   walk.walk(path.join(buildDir, 'dot-src'))
       .on("file", function(root, fileStat, next) {
         filename = fileStat.name;

@@ -16,10 +16,8 @@ var art =
     CAgICAgICAgICAgRnVjayB5b3UsIEhlbGVuIQ==";
 var gulp = require('gulp');
 require('require-dir')('./gulp');
-var mkdirp = require('mkdirp');
+
 var fileExists = require('file-exists');
-var fs = require('fs');
-var path = require('path');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var merge = require('merge-stream');

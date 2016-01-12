@@ -1,6 +1,11 @@
 var gulp = require('gulp');
+var mkdirp = require('mkdirp');
+var walk = require('walk');
+var path = require('path');
+var shell = require('gulp-shell');
+require('./common.js');
 
-gulp.task('build-src-graph', function() {
+gulp.task('mermaid-src', function() {
   mkdirp(path.join(buildDir, 'graph-src'));
   walk.walk(path.join('./', 'src'),
             {
@@ -25,50 +30,47 @@ gulp.task('build-src-graph', function() {
                     '/usr/bin/env python3 ./python_modules/c-flowchart/mermaid_graph.py <%= file.path %> > ' +
                         path.join(buildDir, 'graph-src', filename + '.graph'),
                   ],
-                  {ignoreErrors : true}))
+                  {ignoreErrors : true, verbose : true}))
         }
         next();
       })
 });
 
-gulp.task('build-graph', //['build-src-graph'],
-          function() {
-            mkdirp(path.join(buildDir, 'graph'));
-            walk.walk(path.join(buildDir, 'graph-src'),
-                      {
-                        followLinks : false,
-                      })
-                .on("file", function(root, fileStat, next) {
-                  filename = fileStat.name;
-                  filepath = path.resolve(root, filename);
-                  if ([ '.graph' ].contains(path.extname(filename))) {
-                    console.log("Mermaid parse: " + filename);
-                    fs.readFile(filepath, 'utf8', function(err, data) {
-                      if (err) {
-                        return console.log(err);
-                      }
-                    });
-                  }
-                  next();
-                });
+gulp.task('mermaid-graph', [ 'mermaid-src' ], function() {
+  mkdirp(path.join(buildDir, 'graph'));
+  walk.walk(path.join(buildDir, 'graph-src'), {followLinks : false})
+      .on("file", function(root, fileStat, next) {
+        filename = fileStat.name;
+        filepath = path.resolve(root, filename);
+        if ([ '.graph' ].contains(path.extname(filename))) {
+          console.log("Found mermaid source file: '" + filename +
+                      "', but svg auto generation is not supported.");
+          //   fs.readFile(filepath, 'utf8', function(err, data) {
+          //     if (err) {
+          //       return console.log(err);
+          //     }
+          //   });
+        }
+        next();
+      });
 
-            mdString = "";
-            walk.walk(path.join(buildDir, 'graph'),
-                      {
-                        followLinks : false,
-                      })
-                .on("file",
-                    function(root, fileStat, next) {
-                      filename = fileStat.name;
-                      filepath = path.resolve(root, filename);
-                      if ([ '.svg' ].contains(path.extname(filename))) {
-                        console.log("Adding: " + filename);
-                        mdString += "`" + filename + "`:\n" + "![" + filename +
-                                    "](" + " " + filename + ")";
-                      }
-                      next();
-                    })
-                .on("end", function() {
-                  savefile(path.join(buildDir, 'graph', 'graph.md'), mdString);
-                })
-          });
+  // mdString = "";
+  // walk.walk(path.join(buildDir, 'graph'),
+  //           {
+  //             followLinks : false,
+  //           })
+  //     .on("file",
+  //         function(root, fileStat, next) {
+  //           filename = fileStat.name;
+  //           filepath = path.resolve(root, filename);
+  //           if ([ '.svg' ].contains(path.extname(filename))) {
+  //             console.log("Adding: " + filename);
+  //             mdString += "`" + filename + "`:\n" + "![" + filename + "](" +
+  //                         " " + filename + ")";
+  //           }
+  //           next();
+  //         })
+  //     .on("end", function() {
+  //       savefile(path.join(buildDir, 'graph', 'graph.md'), mdString);
+  //     })
+});
