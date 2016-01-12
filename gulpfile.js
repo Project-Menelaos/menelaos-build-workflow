@@ -66,11 +66,7 @@ gulp.task('source-code-list', function() {
     mkdirp(buildDir + '/src');
 
     var tasks = folders.map(function(folder) {
-       // concat into foldername.js
-       // write to output
-       // minify
-       // rename to folder.min.js
-       // write to output again
+       // concat into foldername.md
        return gulp.src(path.join(scriptsPath, folder, '/**/*.{c,h}'))
        .pipe(insert.transform(function(contents, file) {
         	var head = '### 文件`' + file.path + '`的内容：\n```c\n';
@@ -81,14 +77,11 @@ gulp.task('source-code-list', function() {
          .pipe(gulp.dest('./'));
     });
 
-    // process all remaining files in scriptsPath root into main.js and main.min.js files
-    // var root = gulp.src(path.join(scriptsPath, '/*.js'))
-    //      .pipe(concat('main.js'))
-    //      .pipe(gulp.dest(scriptsPath))
-    //      .pipe(rename('main.min.js'))
-    //      .pipe(gulp.dest(scriptsPath));
+    var root = gulp.src(buildDir + '/src/*.md')
+         .pipe(concat('src.md'))
+         .pipe(gulp.dest(buildDir));
 
-    return merge(tasks);// , root);
+    return merge(tasks , root);
 })
 
 gulp.task('build', ['update-deps', 'make-docx'], function () {
