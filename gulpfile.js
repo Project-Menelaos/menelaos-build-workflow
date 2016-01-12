@@ -23,8 +23,19 @@ var gfi = require("gulp-file-insert");
 var order = require("gulp-order");
 var marked = require('marked');
 var file = require('gulp-file');
+var walk = require('walk');
 
 var buildDir = './build'
+
+Array.prototype.contains = function(obj) {
+    var i = this.length;
+    while (i--) {
+        if (this[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
 
 function getFolders(dir) {
     return fs.readdirSync(dir)
@@ -82,6 +93,54 @@ gulp.task('build-src', function() {
 
 })
 
+gulp.task('build-src-graph', function() {
+    mkdirp(path.join(buildDir, 'graph-src'));
+    // TODO: change to walk.walk
+        walk.walk(path.join('./', 'src'), {
+            followLinks: false,
+            filters: ["Temp", "_Temp", ".git*", ".git/", ".*\.xcodeproject$", "\.DS_Store"]
+        }).on("file", function(root, fileStat, next) {
+    //         fs.readFile(path.resolve(root, fileStat.name), function (buffer) {
+    //     console.log(fileStat.name, buffer.byteLength);
+    //     next();
+    //   });
+    filename = fileStat.name;
+    filepath = path.resolve(root, filename)
+        if (['.c', '.h'].contains(path.extname(filename))) {
+            console.log("Found: " + filename);
+            gulp.src(filepath, {read: false})
+                .pipe(shell([
+                  '/usr/bin/env python3 ./python_modules/c-flowchart/mermaid_graph.py <%= file.path %> > ' + path.join(buildDir, 'graph-src', filename + '.graph'),
+              ], {
+                  ignoreErrors: true
+              }))
+        }
+        next();
+    })
+    mkdirp(path.join(buildDir, 'graph'));
+    // TODO: change to walk.walk
+        walk.walk(path.join(buildDir, 'graph'), {
+            followLinks: false,
+        }).on("file", function(root, fileStat, next) {
+    //         fs.readFile(path.resolve(root, fileStat.name), function (buffer) {
+    //     console.log(fileStat.name, buffer.byteLength);
+    //     next();
+    //   });
+    filename = fileStat.name;
+    filepath = path.resolve(root, filename)
+        if (['.c', '.h'].contains(path.extname(filename))) {
+            console.log("Found: " + filename);
+            gulp.src(filepath, {read: false})
+                .pipe(shell([
+                  '/usr/bin/env python3 ./python_modules/c-flowchart/mermaid_graph.py <%= file.path %> > ' + path.join(buildDir, 'graph', filename + '.graph'),
+              ], {
+                  ignoreErrors: true
+              }))
+        }
+        next();
+    })
+})
+
 gulp.task('build-src-list', function() {
     console.log("Building sources...");
     scriptsPath = './src'
@@ -115,13 +174,6 @@ gulp.task('build-doc', ['build-src-list'], function () {
     console.log("Building documents...");
     docsPath = './doc'
     structure = require('./doc/index.json');
-    // gulp.src(path.join(docsPath, '/**/*.md'))
-    //   .pipe(gfi({
-    //     "/* file 1 */": "tmp/file1",
-    //     "/* file 2 */": "tmp/file2",
-    //     version: "tmp/version_number"
-    //   }))
-    //   .pipe(gulp.dest('./dist/'));
 
     Object.keys(structure).map(function(folder) {
        // concat into foldername.md
@@ -154,23 +206,6 @@ gulp.task('build-doc', ['build-src-list'], function () {
 gulp.task('make-html', ['build-doc', 'build-src'], shell.task([
   'pandoc --from=markdown_github --to=docx --smart --verbose --output="./build/report.docx" ./build/doc.md'
 ]))
-
-//function () {
-//    console.log("Making HTML...");
-    // marked.setOptions({
-    //   renderer: new marked.Renderer(),
-    //   gfm: true,
-    //   tables: true,
-    //   breaks: true,
-    //   pedantic: true,
-    //   sanitize: true,
-    //   smartLists: true,
-    //   smartypants: true
-    // });
-    // file('doc.html', marked(fs.readFile(path.join(buildDir, 'doc.md'), 'utf8')), { src: true })
-    //     .pipe(gulp.dest(path.join(buildDir)));
-
-//})
 
 gulp.task('make-docx', ['collect-doc'], function () {
     console.log("Making Microsoft Word format output...");

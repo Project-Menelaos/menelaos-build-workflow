@@ -5,6 +5,7 @@
   "author": "James Swineson <i@swineson.me>",
   "dependencies": {
     "file-exists": "^1.0.0",
+    "flavored-path": "0.0.8",
     "gulp": "^3.1.0",
     "gulp-concat": "^2.6.0",
     "gulp-file": "^0.2.0",
@@ -18,7 +19,8 @@
     "menelaos": "^0.5.6",
     "merge-stream": "^1.0.0",
     "mkdirp": "^0.5.1",
-    "mustache": "^2.2.1"
+    "mustache": "^2.2.1",
+    "walk": "^2.3.9"
   },
   "scripts": {
     "gulp": "gulp"
