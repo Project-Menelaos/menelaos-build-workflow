@@ -21,6 +21,8 @@ var merge = require('merge-stream');
 var insert = require('gulp-insert');
 var gfi = require("gulp-file-insert");
 var order = require("gulp-order");
+var marked = require('marked');
+var file = require('gulp-file');
 
 var buildDir = './build'
 
@@ -55,6 +57,7 @@ gulp.task('update-deps', shell.task([
 
 gulp.task('init', function() {
     // initialize environment
+    gulp.start('display-logo');
     mkdirp('./python_modules');
     gulp.start('install-deps');
     structure = require('./doc/index.json');
@@ -67,7 +70,7 @@ gulp.task('init', function() {
                 file = folder + "/" + item + ".md";
                 if (!fileExists(file)) {
                     console.log("Creating file: " + file);
-                    savefile(file, "# " + item);
+                    savefile(file, "## " + item);
                 }
             })
         }
@@ -76,6 +79,10 @@ gulp.task('init', function() {
 })
 
 gulp.task('build-src', function() {
+
+})
+
+gulp.task('build-src-list', function() {
     console.log("Building sources...");
     scriptsPath = './src'
     var folders = getFolders(scriptsPath);
@@ -104,29 +111,10 @@ gulp.task('build', ['update-deps', 'make-docx'], function () {
     console.log("Building project...");
 })
 
-gulp.task('build-doc', function () {
+gulp.task('build-doc', ['build-src-list'], function () {
     console.log("Building documents...");
-    docsPath = './src'
+    docsPath = './doc'
     structure = require('./doc/index.json');
-    // console.log(structure);
-    Object.keys(structure).map(function(folder, index) {
-        console.log(folder);
-        console.log(structure[folder]);
-        structure[folder].map(function(item){
-            return item + '.md'
-        })
-    });
-    sequence = [];
-    for (var items in structure) {
-        if (structure.hasOwnProperty(items)) {
-            for (var item in structure[items]) {
-                if (items.hasOwnProperty(item)) {
-                    sequence.push(path.join(docsPath, items, structure[items][item] + '.md'));
-                }
-            }
-        }
-    }
-    // console.log(sequence);
     // gulp.src(path.join(docsPath, '/**/*.md'))
     //   .pipe(gfi({
     //     "/* file 1 */": "tmp/file1",
@@ -134,16 +122,55 @@ gulp.task('build-doc', function () {
     //     version: "tmp/version_number"
     //   }))
     //   .pipe(gulp.dest('./dist/'));
-    //return merge(tasks);
-    gulp.src(path.join(docsPath, '/**/*.md'))
+
+    Object.keys(structure).map(function(folder) {
+       // concat into foldername.md
+       sequence = structure[folder].map(function(i){return i + '.md'});
+       gulp.src(path.join(docsPath, folder, '*.md'))
+         .pipe(order(sequence))
+         .pipe(concat(path.join(buildDir, 'doc', 'docs',folder + '.md')))
+         .pipe(insert.transform(function(contents, file) {
+         	return '# ' + folder + '\n' + contents;
+         }))
+         .pipe(gulp.dest('./'));
+    });
+
+    sequence = Object.keys(structure).map(function(i) {return i + '.md'});
+    console.log(sequence);
+    gulp.src(path.join(buildDir, 'doc', '**/*.md'))
         .pipe(order(sequence))
-        .pipe(concat(buildDir + '/src/' + folder + '.md'))
-        .pipe(gulp.dest(path.join(buildDir, 'docs')));
+        .pipe(insert.transform(function(contents, file) {
+           return contents + '\n';
+        }))
+        .pipe(concat('doc.md'))
+        .pipe(gfi({
+            "{{ src-list }}": path.join(buildDir, 'src.md')
+            //"{{ src-graph }}": "tmp/file2",
+            // version: "gulpfile."
+        }))
+        .pipe(gulp.dest(path.join(buildDir)));
 })
 
-gulp.task('collect-doc', ['build-doc', 'build-src'], function () {
-    console.log("Collecting documents...");
-})
+gulp.task('make-html', ['build-doc', 'build-src'], shell.task([
+  'pandoc --from=markdown_github --to=docx --smart --verbose --output="./build/report.docx" ./build/doc.md'
+]))
+
+//function () {
+//    console.log("Making HTML...");
+    // marked.setOptions({
+    //   renderer: new marked.Renderer(),
+    //   gfm: true,
+    //   tables: true,
+    //   breaks: true,
+    //   pedantic: true,
+    //   sanitize: true,
+    //   smartLists: true,
+    //   smartypants: true
+    // });
+    // file('doc.html', marked(fs.readFile(path.join(buildDir, 'doc.md'), 'utf8')), { src: true })
+    //     .pipe(gulp.dest(path.join(buildDir)));
+
+//})
 
 gulp.task('make-docx', ['collect-doc'], function () {
     console.log("Making Microsoft Word format output...");
