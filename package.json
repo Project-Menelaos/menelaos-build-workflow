@@ -6,6 +6,7 @@
   "dependencies": {
     "file-exists": "^1.0.0",
     "flavored-path": "0.0.8",
+    "graphviz": "0.0.8",
     "gulp": "^3.1.0",
     "gulp-concat": "^2.6.0",
     "gulp-file": "^0.2.0",
@@ -20,6 +21,7 @@
     "merge-stream": "^1.0.0",
     "mkdirp": "^0.5.1",
     "mustache": "^2.2.1",
+    "require-dir": "^0.3.0",
     "svg2png": "^3.0.0",
     "walk": "^2.3.9"
   },
