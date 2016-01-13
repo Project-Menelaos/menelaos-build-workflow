@@ -42,27 +42,35 @@ gulp.task('markdown', function() {
         "{{ cfg }}" : path.join(buildDir, 'dot-src', 'cfg.md'),
         "{{ dom }}" : path.join(buildDir, 'dot-src', 'dom.md'),
         "{{ py-cfg }}" : path.join(buildDir, 'dot-src', 'pydot.md'),
-        "{{ data-structure }}" : path.join(buildDir, 'data-structure.c')
+        "{{ data-structure }}" : path.join(buildDir, 'data-structure.md')
         // version: "gulpfile."
       }))
       .pipe(gulp.dest(path.join(buildDir)));
 });
 
-gulp.task('docx', shell.task(
-                      [
-                        [ 'rm', '-f', path.join(buildDir, 'report.docx') ]
-                            .cmd(),
-                        [
-                          'pandoc',
-                          '--from=markdown_github',
-                          '--to=docx',
-                          '--smart',
-                          '--verbose',
-                          '--output=' + path.join(buildDir, 'report.docx'),
-                          path.join(buildDir, 'report.md')
-                        ].cmd()
-                      ],
-                      {
-                        ignoreErrors : true,
-                        verbose : true,
-                      }));
+gulp.task(
+    'docx',
+    shell.task(
+        [
+          [ 'rm', '-f', path.join(buildDir, 'report.docx') ]
+              .cmd(),
+          [
+            'pandoc',
+            '--from=markdown_github',
+            '--to=docx',
+            '--smart',
+            '--standalone',
+            '--reference-docx=' + path.join('doc', 'report.docx'),
+            '--normalize',
+            '--table-of-contents',
+            '--toc-depth=2',
+            //   '--include-in-header=' + path.join('doc', 'frontpage.md'),
+            '--verbose',
+            '--output=' + path.join(buildDir, 'report.docx'),
+            path.join(buildDir, 'report.md')
+          ].cmd()
+        ],
+        {
+          ignoreErrors : true,
+          verbose : true,
+        }));
