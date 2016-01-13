@@ -15,7 +15,8 @@ gulp.task('src-list', function() {
     // concat into foldername.md
     return gulp.src(path.join(scriptsPath, folder, '/**/*.{c,h}'))
         .pipe(insert.transform(function(contents, file) {
-          var head = '### 文件`' + file.path + '`的内容：\n```c\n';
+          var head = '### 文件`' + file.path.split(/\/|\\/).pop() +
+                     '`的内容：\n```c\n';
           var tail = '\n```';
           return head + contents + tail;
         }))

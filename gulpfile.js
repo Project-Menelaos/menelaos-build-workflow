@@ -16,6 +16,8 @@ var art =
     CAgICAgICAgICAgRnVjayB5b3UsIEhlbGVuIQ==";
 var gulp = require('gulp');
 var gulpSequence = require('gulp-sequence');
+var del = require('del');
+var vinylPaths = require('vinyl-paths');
 require('require-dir')('./gulp');
 
 var rename = require('gulp-rename');
@@ -36,5 +38,10 @@ gulp.task('graph',
                        [ 'cfg-dot', 'callgraph-dot', 'dom-dot', 'pydot-src' ],
                        'compile-dot', 'compile-graph'));
 
-gulp.task('build', gulpSequence('update-deps', [ 'src-list', 'graph' ],
-                                'markdown', 'docx'));
+gulp.task('build', gulpSequence('update-deps',
+                                [ 'src-list', 'graph', 'data-structure-src' ],
+                                'data-structure', 'markdown', 'docx'));
+
+gulp.task('clean', function() {
+  return gulp.src('build/*').pipe(vinylPaths(del)).pipe(gulp.dest('dist'));
+});

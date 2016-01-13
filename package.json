@@ -4,6 +4,7 @@
   "description": "A testing menelaos project",
   "author": "James Swineson <i@swineson.me>",
   "dependencies": {
+    "del": "^2.2.0",
     "file-exists": "^1.0.0",
     "flavored-path": "0.0.8",
     "graphviz": "0.0.8",
@@ -26,6 +27,7 @@
     "npm-check-updates": "^2.5.6",
     "require-dir": "^0.3.0",
     "svg2png": "^3.0.0",
+    "vinyl-paths": "^2.1.0",
     "walk": "^2.3.9"
   },
   "scripts": {
