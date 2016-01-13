@@ -29,7 +29,6 @@ gulp.task('data-structure-src', function() {
           gulp.src(filepath, {read : false})
               .pipe(shell(
                   [
-
                     [
                       '/usr/bin/env',
                       'python3',
@@ -37,7 +36,6 @@ gulp.task('data-structure-src', function() {
                       '<%= file.path %>',
                       '>> ' + path.join(buildDir, 'data-structure.c')
                     ].cmd()
-
                   ],
                   {ignoreErrors : true, verbose : true}))
         }
@@ -46,10 +44,10 @@ gulp.task('data-structure-src', function() {
 });
 
 gulp.task('data-structure', function() {
-  gulp.src(path.join(buildDir, 'data_structure.c'))
+  gulp.src('./build/*.c')
       .pipe(insert.transform(function(contents, file) {
-        return '```\n' + contents + '```\n';
+        return '```c\n' + contents + '```\n';
       }))
-      .pipe(concat('data_structure.md'))
-      .pipe(gulp.dest(path.join(buildDir)));
+      .pipe(concat('data-structure.md'))
+      .pipe(gulp.dest(buildDir));
 });
