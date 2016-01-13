@@ -40,7 +40,8 @@ gulp.task('markdown', function() {
         // "{{ src-graph }}" : path.join(buildDir, 'graph', 'graph.md'),
         "{{ callgraph }}" : path.join(buildDir, 'dot-src', 'callgraph.md'),
         "{{ cfg }}" : path.join(buildDir, 'dot-src', 'cfg.md'),
-        "{{ dom }}" : path.join(buildDir, 'dot-src', 'dom.md')
+        "{{ dom }}" : path.join(buildDir, 'dot-src', 'dom.md'),
+        "{{ py-cfg }}" : path.join(buildDir, 'dot-src', 'pydot.md')
         // version: "gulpfile."
       }))
       .pipe(gulp.dest(path.join(buildDir)));

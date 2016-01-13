@@ -32,7 +32,8 @@ gulp.task('default', function() {
 });
 
 gulp.task('graph',
-          gulpSequence('llvm-ir', [ 'cfg-dot', 'callgraph-dot', 'dom-dot' ],
+          gulpSequence('llvm-ir',
+                       [ 'cfg-dot', 'callgraph-dot', 'dom-dot', 'pydot-src' ],
                        'compile-dot', 'compile-graph'));
 
 gulp.task('build', gulpSequence('update-deps', [ 'src-list', 'graph' ],
